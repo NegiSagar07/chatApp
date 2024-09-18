@@ -6,6 +6,7 @@ function App() {
   const [username, setusername] = useState("")
   const [email, setemail] = useState("")
   const [password, setpassword] = useState("")
+  const [message, setmessage] = useState("")
 
   const handleSubmit = async(e) => {
     e.preventDefault();
@@ -37,6 +38,27 @@ function App() {
 
   } 
 
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/message',{
+        method : 'POST',
+        headers : {
+          'Content-Type' : 'application/json',
+        },
+        body : JSON.stringify({message})
+      })
+
+      if(!response.ok) {
+        throw new Error('response is not ok');
+      }  
+      const result = await response.text();
+      console.log(result);
+    } catch (error) {
+      console.error("Error :",error);
+    }
+  }
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -45,6 +67,10 @@ function App() {
         <input type='text' placeholder='password' value={password} onChange={(e)=> setpassword(e.target.value)} />
 
         <button>submit</button>
+      </form>
+      <form onSubmit={sendMessage}>
+        <input type='text' placeholder='write message' value={message} onChange={(e) => setmessage(e.target.value)}/>
+        <button>send</button>
       </form>
     </div>
   );

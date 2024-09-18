@@ -1,11 +1,17 @@
+const { createServer } = require('node:http')
+const {join} = require('node:path');
+
 const express = require('express');
 const mongoose = require('mongoose');
+
 const cors = require('cors');
 const SignUp = require('./models/signup.models');
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+const server = createServer(app);
 
 const dburi = "mongodb+srv://sagarnegi926:UuDO4kMGzVffjD0u@cluster0.4lefr.mongodb.net/";
 const connectDb = async () => {
@@ -29,6 +35,14 @@ app.post('/signup', async(req, res) => {
     } catch (error) {
         console.error("Error : ",error);
     }
+})
+
+// for socket io
+
+app.post('/message',(req, res) => {
+    const {message} = req.body;
+    console.log("data received",message);
+    res.send("message received");
 })
 
 const port = 5000;
