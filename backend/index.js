@@ -1,17 +1,20 @@
 const { createServer } = require('node:http')
 const {join} = require('node:path');
+const {Server} = require('socket.io');
 
 const express = require('express');
 const mongoose = require('mongoose');
 
 const cors = require('cors');
 const SignUp = require('./models/signup.models');
+const { Socket } = require('node:dgram');
 
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 const server = createServer(app);
+const io = new Server(server);
 
 const dburi = "mongodb+srv://sagarnegi926:UuDO4kMGzVffjD0u@cluster0.4lefr.mongodb.net/";
 const connectDb = async () => {
@@ -38,6 +41,10 @@ app.post('/signup', async(req, res) => {
 })
 
 // for socket io
+
+io.on('connection',(socket) => {
+    console.log("a user connected");    
+})
 
 app.post('/message',(req, res) => {
     const {message} = req.body;

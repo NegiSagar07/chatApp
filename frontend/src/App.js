@@ -3,6 +3,8 @@ import './App.css';
 
 function App() {
 
+  const socket = io('http://localhost:5000');
+
   const [username, setusername] = useState("")
   const [email, setemail] = useState("")
   const [password, setpassword] = useState("")
