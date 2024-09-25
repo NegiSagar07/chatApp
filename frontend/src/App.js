@@ -1,79 +1,135 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import { io } from 'socket.io-client';
+
+// Initialize the socket connection to the backend
+const socket = io('http://localhost:5000');
 
 function App() {
+  // States to hold form inputs and messages
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageHistory, setMessageHistory] = useState([]); // For storing chat history
+  const [currentUser, setCurrentUser] = useState(null);  // To track the logged-in user
 
-  const socket = io('http://localhost:5000');
-
-  const [username, setusername] = useState("")
-  const [email, setemail] = useState("")
-  const [password, setpassword] = useState("")
-  const [message, setmessage] = useState("")
-
-  const handleSubmit = async(e) => {
+  // Handle form submission to register a new user
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const user = {
-      name : username,
-      email : email,
-      password : password
-    }
+      name: username,
+      email: email,
+      password: password
+    };
 
     try {
       const response = await fetch('/signup', {
-        method : 'POST',
-        headers : {
-          'Content-Type' : 'application/json'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        body : JSON.stringify(user)
-      })
+        body: JSON.stringify(user)
+      });
 
-      if(!response.ok) {
-        throw new Error("response is not ok");
-      }    
+      if (!response.ok) {
+        throw new Error("Response is not ok");
+      }
+
       const message = await response.json();
       console.log(message);
+      alert(message.message);
+      setCurrentUser(user.name); // Store the current username after signup
 
     } catch (error) {
-      console.error("Error : ",error);
+      console.error("Error:", error);
     }
+  };
 
-  } 
-
-  const sendMessage = async (e) => {
+  // Handle chat message submission
+  const sendMessage = (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch('/message',{
-        method : 'POST',
-        headers : {
-          'Content-Type' : 'application/json',
-        },
-        body : JSON.stringify({message})
-      })
 
-      if(!response.ok) {
-        throw new Error('response is not ok');
-      }  
-      const result = await response.text();
-      console.log(result);
-    } catch (error) {
-      console.error("Error :",error);
-    }
-  }
+    if (message.trim() === '') return;  // Prevent sending empty messages
+
+    const messageData = {
+      user: currentUser,
+      text: message
+    };
+
+    // Emit the 'chat message' event with the message data
+    socket.emit('chat message', messageData);
+    setMessageHistory(prevHistory => [...prevHistory, messageData]); // Add own message to history
+    setMessage("");  // Clear the input field after sending
+  };
+
+  // Listen for incoming messages from the server
+  useEffect(() => {
+    socket.on('receive message', (msg) => {
+      console.log('Received from server:', msg);
+      setMessageHistory(prevHistory => [...prevHistory, msg]);  // Append the new message to history
+    });
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      socket.off('receive message');  // Use the correct event name for cleanup
+    };
+  }, []);
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input type='text' placeholder='username' value={username} onChange={(e) => setusername(e.target.value)} />
-        <input type='text' placeholder='email' value={email} onChange={(e) => setemail(e.target.value)} />
-        <input type='text' placeholder='password' value={password} onChange={(e)=> setpassword(e.target.value)} />
+    <div className="app-container">
+      {/* Sign Up Form */}
+      <form onSubmit={handleSubmit} className="signup-form">
+        <input
+          type='text'
+          placeholder='Username'
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type='email'
+          placeholder='Email'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type='password'
+          placeholder='Password'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit">Sign Up</button>
+      </form>
 
-        <button>submit</button>
+      {/* Chat Section */}
+      <form onSubmit={sendMessage} className="chat-form">
+        <input
+          type='text'
+          placeholder='Write message...'
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button type="submit">Send Message</button>
       </form>
-      <form onSubmit={sendMessage}>
-        <input type='text' placeholder='write message' value={message} onChange={(e) => setmessage(e.target.value)}/>
-        <button>send</button>
-      </form>
+
+      {/* Display received chat message history */}
+      <div className="message-history">
+        <h3>Message History:</h3>
+        <div className="message-history-container">
+          {messageHistory.map((msg, index) => (
+            <div
+              key={index}
+              className={`message-item ${msg.user === currentUser ? 'sent' : 'received'}`}
+            >
+              <strong>{msg.user === currentUser ? 'You' : msg.user}:</strong> {msg.text}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

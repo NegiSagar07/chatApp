@@ -1,59 +1,70 @@
-const { createServer } = require('node:http')
-const {join} = require('node:path');
-const {Server} = require('socket.io');
-
+const { createServer } = require('node:http');
+const { Server } = require('socket.io');
 const express = require('express');
 const mongoose = require('mongoose');
-
 const cors = require('cors');
 const SignUp = require('./models/signup.models');
-const { Socket } = require('node:dgram');
-
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 const server = createServer(app);
-const io = new Server(server);
+
+// Socket.io setup with CORS
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST']
+  }
+});
 
 const dburi = "mongodb+srv://sagarnegi926:UuDO4kMGzVffjD0u@cluster0.4lefr.mongodb.net/";
 const connectDb = async () => {
-    try {
-        await mongoose.connect(dburi);
-        console.log("connected successfully");
-    } catch (error) {
-        console.error("Error : ",error)
-    }
-} 
+  try {
+    await mongoose.connect(dburi);
+    console.log("Connected successfully");
+  } catch (error) {
+    console.error("Error: ", error);
+  }
+};
 
 connectDb();
 
-app.post('/signup', async(req, res) => {
-    const { name , email , password} = req.body;
-    try {
-        const newuser = new SignUp({ name , email, password});
-        await newuser.save();
-        res.status(201).json({message : "user created successfully"})
-        console.log({ name,email,password})
-    } catch (error) {
-        console.error("Error : ",error);
-    }
-})
+// Signup route
+app.post('/signup', async (req, res) => {
+  const { name, email, password } = req.body;
+  try {
+    const newuser = new SignUp({ name, email, password });
+    await newuser.save();
+    res.status(201).json({ message: "User created successfully" });
+    console.log({ name, email, password });
+  } catch (error) {
+    console.error("Error: ", error);
+    res.status(500).json({ error: "Error creating user" });
+  }
+});
 
-// for socket io
+// Socket.io connection and events
+io.on('connection', (socket) => {
+  console.log(`User connected: ${socket.id}`);
 
-io.on('connection',(socket) => {
-    console.log("a user connected");    
-})
+  // Listen for chat messages from clients
+  socket.on('chat message', (msg) => {
+    console.log('Message received from client:', msg);
 
-app.post('/message',(req, res) => {
-    const {message} = req.body;
-    console.log("data received",message);
-    res.send("message received");
-})
+    // Broadcast the message to all other connected clients
+    socket.broadcast.emit('receive message', {
+      user: msg.user,  // Pass the username or 'from'
+      text: msg.text,  // Pass the actual message content
+    });
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+});
 
 const port = 5000;
-app.listen(port, () => {
-    console.log(`app running on ${port}`);
-})
-
+server.listen(port, () => {
+  console.log(`App running on port ${port}`);
+});
