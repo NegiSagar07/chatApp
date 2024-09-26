@@ -77,34 +77,16 @@ function App() {
     };
   }, []);
 
+  const[IsSignedIn, setIsSignedIn] = useState(false);
+  const handleSignUp = () =>{
+    setIsSignedIn(!IsSignedIn);
+  }
+
   return (
     <div className="app-container">
-      {/* Sign Up Form */}
-      <form onSubmit={handleSubmit} className="signup-form">
-        <input
-          type='text'
-          placeholder='Username'
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type='email'
-          placeholder='Email'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type='password'
-          placeholder='Password'
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Sign Up</button>
-      </form>
-
+      {IsSignedIn ? 
+      (
+        <>             
       {/* Chat Section */}
       <form onSubmit={sendMessage} className="chat-form">
         <input
@@ -130,6 +112,43 @@ function App() {
           ))}
         </div>
       </div>
+        </>
+      ):
+      (<>
+        {/* Sign Up Form */}
+          <form onSubmit={handleSubmit} className="signup-form">
+          <p className='formTitle'>Sign-Up</p>
+          <div className='formInputs'>
+          <input
+            className='credInputs'
+            type='text'
+            placeholder='Username'
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <input
+            className='credInputs'
+            type='email'
+            placeholder='Email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            className='credInputs'
+            type='password'
+            placeholder='Password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          </div>
+          <button type="submit" onClick={handleSignUp} className='signUpBtn'>Sign Up</button>
+        </form>
+         
+        </>)
+        }
     </div>
   );
 }
