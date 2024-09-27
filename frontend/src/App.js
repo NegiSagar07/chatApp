@@ -25,7 +25,7 @@ function App() {
     };
 
     try {
-      const response = await fetch('/signup', {
+      const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -115,6 +115,22 @@ function App() {
         </div>
       </form>
 
+<<<<<<< HEAD
+=======
+      {/* Display received chat message history */}
+      <div className="message-history">
+        <h3>Message History:</h3>
+        <div className="message-history-container">
+          {messageHistory.map((msg, index) => (
+            <div
+              key={index}
+              className={`message-item ${msg.user === currentUser ? 'sent' : 'received'}`}
+            >
+              <strong>{msg.user === currentUser ? 'You' : msg.user}:</strong> 
+              {msg.text}
+            </div>
+          ))}
+>>>>>>> edbcab3 (pull)
         </div>
       ):
       (<>
