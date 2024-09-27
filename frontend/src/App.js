@@ -86,33 +86,36 @@ function App() {
     <div className="app-container">
       {IsSignedIn ? 
       (
-        <>             
-      {/* Chat Section */}
-      <form onSubmit={sendMessage} className="chat-form">
+        <div className='chatWrapper'>             
+
+      {/* Display received chat message history */}
+        <h3>Message History:</h3>
+        <div className="messageHistoryContainer">
+          {messageHistory.map((msg, index) => (
+            <div
+              key={index}
+              className={`${msg.user === currentUser ? 'yourText': 'otherText' }`}
+            >
+              <p className='message'>{msg.text}</p>
+              
+            </div>
+          ))}
+        </div>
+            {/* Chat Section */}
+      <form onSubmit={sendMessage} className="chatBox">
+        <div className='sendMessageBox'>
         <input
+          className='messageInp'
           type='text'
           placeholder='Write message...'
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button type="submit">Send Message</button>
+        <button type="submit" className='sendBtn'>Send</button>
+        </div>
       </form>
 
-      {/* Display received chat message history */}
-      <div className="message-history">
-        <h3>Message History:</h3>
-        <div className="message-history-container">
-          {messageHistory.map((msg, index) => (
-            <div
-              key={index}
-              className={`message-item ${msg.user === currentUser ? 'sent' : 'received'}`}
-            >
-              <strong>{msg.user === currentUser ? 'You' : msg.user}:</strong> {msg.text}
-            </div>
-          ))}
         </div>
-      </div>
-        </>
       ):
       (<>
         {/* Sign Up Form */}

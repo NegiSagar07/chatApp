@@ -45,8 +45,101 @@ body{
   font-weight: 700;
   font-size: 15px;
 }
+
 .signUpBtn:hover{
   background-color: #22224d;
+}
+
+.chatWrapper{
+  padding: 5px;
+  border-radius: 10px;
+  border-top: 4px solid rgb(27, 99, 27);
+  border-bottom: 5px solid rgb(27, 99, 27);
+  border-left: 1px solid;
+  border-right: 1px solid;
+  display: flex;
+  flex-direction: column;
+  height: 95vh;
+  width: 500px;
+  position: relative;
+}
+.chatBox{
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 10vh;
+  margin-left: -1%;
+  margin-top: 102%;
+  width: 100%;
+}
+
+.sendMessageBox{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px;
+
+}
+
+.messageInp{
+  width: 80%;
+  height: 60%;
+  padding: 4px;
+  border: 1px solid;
+  border-radius: 11px;
+  outline: none;
+}
+
+.sendBtn{
+  height: 75%;
+  width: 16%;
+  border: 1px solid lime;
+  border-radius: 10px;
+  background-color: #2ab12a;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.messageHistoryContainer{
+  height: 80%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+
+}
+
+.yourText{
+    border: 1px solid #003100;
+    background-color: #57c557;
+    color: white;
+    max-width: 60%;
+    border-radius: 5px;
+    align-self: flex-end;
+    line-height: 20px;
+    padding: 5px;
+}
+
+.otherText{
+  border: 1px solid;
+  background-color: white;
+  color: black;
+  max-width: 60%;
+  border-radius: 5px;
+  align-self: flex-start;
+  line-height: 20px;
+  padding: 5px;
+}
+
+.message{
+  font-family: sans-serif;
+  margin: 5px;
 }
 
 .App {
