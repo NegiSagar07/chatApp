@@ -1,9 +1,11 @@
-const { createServer } = require('node:http');
-const { Server } = require('socket.io');
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const SignUp = require('./models/signup.models');
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import SignUp from './models/signup.models.js';  // Ensure the .js extension is added for local imports
+import authRoutes from './routes/auth.routes.js';  // Ensure the .js extension is added for local imports
+
 
 const app = express();
 app.use(cors());
@@ -30,19 +32,9 @@ const connectDb = async () => {
 
 connectDb();
 
-// Signup route
-app.post('/signup', async (req, res) => {
-  const { name, email, password } = req.body;
-  try {
-    const newuser = new SignUp({ name, email, password });
-    await newuser.save();
-    res.status(201).json({ message: "User created successfully" });
-    console.log({ name, email, password });
-  } catch (error) {
-    console.error("Error: ", error);
-    res.status(500).json({ error: "Error creating user" });
-  }
-});
+
+app.use("/api/auth", authRoutes);
+
 
 // Socket.io connection and events
 io.on('connection', (socket) => {
