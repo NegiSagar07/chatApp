@@ -1,14 +1,11 @@
-import { signup,login,logout } from '../controller/auth.controller.js';
+import express from 'express'; // Importing express using ES6 syntax
+import { signup, login, logout } from '../controller/auth.controller.js';
 
-const express = require('express');
+const router = express.Router(); // Create a new Router instance
 
-
-const router = express.Router();
-
+// Define routes
 router.post("/signup", signup);
-
 router.post("/login", login);
-
 router.post("/logout", logout);
 
-export default router;
+export default router; // Export the router

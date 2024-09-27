@@ -3,7 +3,6 @@ import { Server } from 'socket.io';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import SignUp from './models/signup.models.js';  // Ensure the .js extension is added for local imports
 import authRoutes from './routes/auth.routes.js';  // Ensure the .js extension is added for local imports
 
 

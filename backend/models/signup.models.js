@@ -20,4 +20,4 @@ const signupSchema = mongoose.Schema(
 
 const Signup = mongoose.model('Signup', signupSchema);
 
-module.exports = Signup;
+export default Signup;
