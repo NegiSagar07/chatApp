@@ -8,6 +8,7 @@ const Messages = () => {
 
   const location = useLocation(); 
   const currentUser = location.state?.username || 'Guest'; 
+  const [chatpartner, setchatpartner] = useState("");
     // State to track current message input
     const [message, setMessage] = useState("");
 
@@ -17,12 +18,19 @@ const Messages = () => {
     // Static user for this example
     // You can replace this with dynamic user data
 
+    const getroomId = () => {
+      return [currentUser,chatpartner].sort().join('-');
+    }
+
     // Function to handle sending message
     const sendMessage = (e) => {
         e.preventDefault();
         if (message.trim() === '') return; // Prevent sending empty messages
+
+        const roomId = getroomId();
     
         const messageData = {
+          roomId,
           user: currentUser,
           text: message,
         };
@@ -38,19 +46,28 @@ const Messages = () => {
     };
 
     useEffect(() => {
+      if (chatpartner) {
+        const roomId = getroomId();
+  
+        // Join the room for the current conversation
+        socket.emit('join-room', roomId);
+  
         // Listen for messages from the server
         socket.on('receive message', (msg) => {
-          setMessageHistory((prevHistory) => [...prevHistory, msg]);
+          setMessageHistory((prevHistory) => [...prevHistory, msg]); // Update message history
         });
-    
-        // Cleanup the listener when the component unmounts
+  
+        // Cleanup when the component unmounts or chat partner changes
         return () => {
-          socket.off('receive message');
+          socket.emit('leave-room', roomId); // Leave the room when done
+          socket.off('receive message'); // Remove the message listener
         };
-    }, []);
+      }
+    }, [chatpartner, currentUser]);
 
   return (
     <div>
+        <input type='text' placeholder='select chat partner' value={chatpartner} onChange={(e) => setchatpartner(e.target.value)}/>
         {/* Displaying the message history */}
         <div className="message-box">
           {messageHistory.map((msg, index) => (
