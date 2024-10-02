@@ -27,9 +27,11 @@ const App = () => {
   ]);
 
   return (
-    <RouterProvider router={router}>
-      <ProvideRoute/>
-    </RouterProvider>
+    <>
+      <RouterProvider router={router}>
+        <ProvideRoute/>
+      </RouterProvider>
+    </>
   )
 }
 

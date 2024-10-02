@@ -35,45 +35,47 @@ const Signup = () => {
       };
 
   return (
-    <div>
-        <form onSubmit={handleSubmit} className="signup-form">
-            <p className='formTitle'>Sign-Up</p>
-            <div className='formInputs'>
+    <div className='h-screen bg-gradient-to-r from-[#3C0753] to-[#910A67] flex justify-center items-center'>
+        <form onSubmit={handleSubmit} className="h-3/5 w-1/4 rounded-3xl shadow-2xl flex flex-col text-white text-2xl font-serif">
+            <span className='text-center mt-4 text-3xl'>Register yourself !</span>
+            <div className='flex flex-col m-4'>
+              <label>Name</label>
               <input
-                className='credInputs'
+                className='h-8 rounded-md mt-2 mb-5 text-black'
                 type='text'
-                placeholder='Username'
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
               />
+              <label>Email</label>
               <input
-                className='credInputs'
+                className='h-8 rounded-md mt-2 mb-5 text-black'
                 type='email'
-                placeholder='Email'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+              <label>Password</label>
               <input
-                className='credInputs'
+                className='h-8 rounded-md mt-2 mb-5 text-black'
                 type='password'
-                placeholder='Password'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <label>Gender</label>
               <input
-                className='credInputs'
+                className='h-8 rounded-md mt-2 mb-5 text-black'
                 type='text'
-                placeholder='gender'
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
                 required
               />
             </div>
-            <button type="submit" className='signUpBtn'>Sign Up</button>
-          </form>
+            <div className='h-16 mt-6 hover:bg-[#910A67] bg-[#3C0753] rounded-2xl shadow-2xl text-center content-center m-4'>
+              <button type="submit" className=''>Sign Up</button>
+            </div>
+        </form>
     </div>
   )
 }
