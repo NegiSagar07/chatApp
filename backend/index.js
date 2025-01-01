@@ -12,6 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 const server = createServer(app);
 
 // Socket.io setup with CORS

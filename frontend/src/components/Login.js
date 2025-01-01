@@ -6,7 +6,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const[username, setusername] = useState("");
-  const [password, setpassword] = useState("")
+  const [password, setpassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,25 +14,24 @@ const Login = () => {
       name : username,
       password : password
     }
-
     try {
-      const response = await fetch('/api/auth/login',{
+      const response = await fetch('/api/auth/login', {
         method : 'POST',
-        headers : {
+        headers :
+        {
           "Content-Type" : "application/json",
         },
         body : JSON.stringify(user)
-      })
-
+      });
       if(!response.ok) {
         throw new Error("login response is not ok");
       } 
       const result = await response.json();
-      console.log(result.message);
-      navigate('/messages', { state: { username } });
+      localStorage.setItem("userId", result.user._id);
+      navigate('/messages', { state: { username }} );
 
     } catch (error) {
-      console.error("Error = ",error);
+      console.error("Error = ", error);
     }
   }
 
