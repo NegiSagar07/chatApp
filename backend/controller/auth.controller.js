@@ -44,14 +44,14 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  console.log("User logged out");
   res.status(200).json({ message: "Logout successful" });
 };
 
 export const friends = async(req, res)=>{
-  const { username } = req.body;
+  const { userId } = req.body;
   try {
-    const user = await User.findOne({ name: username }).populate('friends');
+    
+    const user = await User.findOne({ _id: userId }).populate('friends');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }

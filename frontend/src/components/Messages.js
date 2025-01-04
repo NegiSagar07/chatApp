@@ -34,8 +34,6 @@ const Messages = () => {
     // Function to handle sending message
     const sendMessage = (e) => {
         e.preventDefault();
-        console.log(messageHistory);
-        console.log("the current user is :"+ currentUser)
         if (message.trim() === '') return; // Prevent sending empty messages
 
         const roomId = getroomId();
@@ -48,6 +46,7 @@ const Messages = () => {
     
         // Emit the message to the server via socket
         socket.emit('chat message', messageData);
+        console.log("message sent !");
 
         // Add the sent message to the message history
         setMessageHistory((prevHistory) => [...prevHistory, messageData]);
@@ -60,7 +59,7 @@ const Messages = () => {
     }, []);
 
     useEffect(() => {
-      friendUpdater();
+      // friendUpdater(); 
       if (chatpartner) {
         const roomId = getroomId();
         // Join the room for the current conversation
@@ -68,7 +67,8 @@ const Messages = () => {
   
         // Listen for messages from the server
         socket.on('receive message', (msg) => {
-          setMessageHistory((prevHistory) => [...prevHistory, msg]); // Update message history
+          console.log("message received: ");
+          setMessageHistory((prevHistory) => [...prevHistory, msg]); // Update message history+
         });
   
         // Cleanup when the component unmounts or chat partner changes
@@ -121,17 +121,19 @@ const Messages = () => {
     }
     
     const friendUpdater = async() =>{
-      const currUser = localStorage.getItem("username");
-      console.log("current user is - ", currUser);
+      const currUserId = localStorage.getItem("userId");
+      console.log("current users Id is - ", currUserId);
       try {
         const response = await fetch("api/auth/friends", {
           method: 'POST',
           headers: {
             "Content-Type" : "application/json",
           },
-          body: JSON.stringify({username: currUser })
+          body: JSON.stringify({userId: currUserId })
         });
         const friends = await response.json();
+        console.log("name of friends added: ");
+        console.log(friends);
         setFriends(friends);
         
       } catch (error) {
@@ -164,7 +166,7 @@ const Messages = () => {
   return (
     <div className='border-black border-[2px] h-[100vh] flex flex-row'>
       <div className='border-black border-2 h-full w-[25%]'>
-       <div className=' flex h-[50px] border-black w-full flex items-center mt-1 items-center gap-[5px]' >
+       <div className=' flex h-[50px] border-black w-full mt-1 items-center gap-[5px]' >
           <div className='border-black border-[2px] h-[50px] w-[50px] rounded-[50%] ml-[5px] flex items-center justify-center'>
             Me
           </div>
@@ -198,14 +200,14 @@ const Messages = () => {
         {friends && friends.length > 0 ? (
   <>
     {friends.map((friend, index) => (
-      <div
-        key={friend._id} // Always use unique keys for mapped elements
+      <div key={friend._id} // Always use unique keys for mapped elements
         className="border-black border-t h-[50px] w-full flex items-center gap-2 mt-2 hover:bg-gray-300 active:bg-gray-400 transition duration-300"
       >
         <div className="flex border-[2px] border-black h-[35px] w-[35px] items-center justify-center rounded-[50%] ml-[5px]">
-          {friend.name.charAt(0).toUpperCase()} {/* Display the first letter of the friend's name */}
+          {friend.name.charAt(0).toUpperCase()} { /* Display the first letter of the friend's name */}
         </div>
-        <label>{friend.name}</label> {/* Render friend's name */}
+        <label>{friend.name}</label> 
+        {/* Render friend's name */}
       </div>
     ))}
   </>
@@ -242,8 +244,9 @@ const Messages = () => {
           </p>
         </div>
           {messageHistory.map((msg, index) => {
-                <div key={index} className='flex flex-col w-full pl-[5px] pr-[5px]'>
-                    {msg.user != currentUser ? (
+                return(
+                  <div key={index} className='flex flex-col w-full pl-[5px] pr-[5px]'>
+                    {msg.user !== currentUser ? (
                       <>
                       <div className='max-w-[550px] text-black-800 border-[1px] border-black rounded-[10px] p-[6px] self-start'>
                       <p>{msg.text}</p>
@@ -257,6 +260,7 @@ const Messages = () => {
                       </>
                       )} 
                 </div>
+                )
         })}
 
       </div>
